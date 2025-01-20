@@ -5,5 +5,17 @@
 	"compatibility_date": "2025-01-09",
 	"observability": {
 		"enabled": true
+	},
+
+	"kv_namespaces": [
+		{
+			"binding": "perdooCache",
+			"id": "6a9bea70579e4817a206c2e7edff3e52"
+		}
+	],
+
+	"vars": {
+		"PERDOO_SITE_ID": "678a43cecfa3f5cc985f67ad",
+		"WEBFLOW_ACCESS_TOKEN": "fcfcf0e92c77fe16bd0ebcb0b7b4387ba65f4e8847bcf11237d397131f86c8d4"
 	}
 }
