@@ -31,6 +31,11 @@ export const getAllCollections = async (client: WebflowClient, siteId: string): 
  * @param {string} collectionId
  * @returns A promise resolving to an object containing an array of WebflowCollection data.
  */
-export const getCollectionData = async (client: WebflowClient, collectionId: string): Promise<CollectionItemList> => {
-	return await client.collections.items.listItemsLive(collectionId);
+export const getCollectionData = async (
+	client: WebflowClient,
+	collectionId: string,
+	offset: number = 0,
+	limit: number = 100
+): Promise<CollectionItemList> => {
+	return await client.collections.items.listItemsLive(collectionId, { sortBy: 'lastPublished', offset: offset, limit: limit });
 };
