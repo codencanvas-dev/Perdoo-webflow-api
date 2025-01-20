@@ -1,6 +1,7 @@
 import { getDataFromCache } from './utils/db';
+import { getAllBlogs } from './utils/getAllBlogs';
 import { Env } from './utils/types';
-import { getAllCollections, getWebflowClient } from './utils/webflow';
+import { getAllCollections, getCollectionData, getWebflowClient } from './utils/webflow';
 
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
@@ -21,6 +22,12 @@ export default {
 
 		//getting all collections
 		const { collections } = await getAllCollections(client, (env as Env).PERDOO_SITE_ID);
+
+		//getting only blogs and category collection
+		const blogCollection = collections?.find((cl) => cl.displayName === 'Blogs');
+
+		//fetching blogs and category collections data
+		const blogs = await getAllBlogs(client, blogCollection?.id!);
 
 		return new Response('Working on it');
 	},
