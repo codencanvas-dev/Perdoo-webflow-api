@@ -37,5 +37,5 @@ export const getCollectionData = async (
 	offset: number = 0,
 	limit: number = 100
 ): Promise<CollectionItemList> => {
-	return await client.collections.items.listItemsLive(collectionId, { sortBy: 'lastPublished', offset: offset, limit: limit });
+	return await client.collections.items.listItemsLive(collectionId, { offset: offset, limit: limit });
 };
