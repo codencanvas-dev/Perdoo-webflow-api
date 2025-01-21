@@ -1,5 +1,6 @@
 import { getDataFromCache } from './utils/db';
 import { getAllBlogs } from './utils/getAllBlogs';
+import { mapCategoryToBlog } from './utils/mapCategoryToBlog';
 import { Env } from './utils/types';
 import { getAllCollections, getCollectionData, getWebflowClient } from './utils/webflow';
 
@@ -25,10 +26,16 @@ export default {
 
 		//getting only blogs and category collection
 		const blogCollection = collections?.find((cl) => cl.displayName === 'Blogs');
+		const categoryCollection = collections?.find((cl) => cl.displayName === 'Categories');
 
 		//fetching blogs and category collections data
 		const blogs = await getAllBlogs(client, blogCollection?.id!);
+		const categories = (await getCollectionData(client, categoryCollection?.id!)).items;
 
-		return new Response('Working on it');
+		//mapping blogs single main category with category name
+		const modifiedBlogs = mapCategoryToBlog(categories!, blogs);
+		console.log(modifiedBlogs[0]);
+
+		return new Response('hello from server...');
 	},
 } satisfies ExportedHandler<Env>;
