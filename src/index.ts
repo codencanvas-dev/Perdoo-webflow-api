@@ -3,6 +3,7 @@ import { getAllBlogs } from './utils/getAllBlogs';
 import { mapCategoryToBlog, mergeWithCategoryMapping } from './utils/mapCategoryToBlog';
 import { Env } from './utils/types';
 import { getAllCollections, getCollectionData, getWebflowClient } from './utils/webflow';
+import { getDataFromCache, setDataToCache } from './utils/db';
 
 export default {
 	async fetch(request, env, ctx): Promise<Response> {
@@ -10,6 +11,17 @@ export default {
 
 		// instantiating webflow client & KV storage
 		const client = getWebflowClient(env as Env);
+		const KV = env.perdooCache;
+
+		// checking if data exists in cache
+		const cacheKey = `perdo_${env.PERDOO_SITE_ID}`;
+		const cachedBlogs = await getDataFromCache(cacheKey, KV);
+		const headerOptions = {
+			'Content-Type': 'application/json',
+			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Methods': 'GET, OPTIONS',
+		};
+		if (cachedBlogs) return new Response(JSON.stringify(cachedBlogs), { headers: headerOptions });
 
 		//getting all collections
 		const { collections } = await getAllCollections(client, (env as Env).PERDOO_SITE_ID);
@@ -48,8 +60,9 @@ export default {
 			...mergeWithCategoryMapping(categories!, podcasts, authors!),
 		];
 
-		console.log(allModified[0].fieldData.author);
+		// setting data to cache
+		await setDataToCache(cacheKey, allModified, KV);
 
-		return new Response('hello from server...');
+		return new Response(JSON.stringify(allModified.map((al) => console.log(al.createdOn))));
 	},
 } satisfies ExportedHandler<Env>;
