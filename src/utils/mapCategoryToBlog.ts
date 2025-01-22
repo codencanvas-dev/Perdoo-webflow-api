@@ -10,19 +10,38 @@ import { CollectionItem } from 'webflow-api/api';
  * Each blog object contains an `id` and `fieldData` where the `single-main-category` will be added.
  * @returns {CollectionItem[]} A new array of blogs with the updated `single-main-category` field.
  */
-export const mapCategoryToBlog = (categories: CollectionItem[], blogs: CollectionItem[]): CollectionItem[] => {
+export const mapCategoryToBlog = (
+	categories: CollectionItem[],
+	blogs: CollectionItem[],
+	authors: CollectionItem[]
+): CollectionItem[] | undefined => {
+	if (!blogs[0].fieldData.category) return undefined;
 	// Create a lookup map for categories by ID for efficient access
 	const categoryMap = new Map(categories.map((category) => [category.id, category.fieldData.name]));
+	const authorMap = new Map(authors.map((au) => [au.id, au.fieldData]));
 
 	// Return a new array of blogs with the updated field
 	return blogs.map((blog) => {
-		const categoryName = categoryMap.get(blog.fieldData['single-main-category']);
+		const category = blog.fieldData.category.map((id: string) => categoryMap.get(id));
+		const author = authorMap.get(blog.fieldData.author);
 		return {
 			...blog,
 			fieldData: {
 				...blog.fieldData,
-				'single-main-category': categoryName || null,
+				author,
+				category,
 			},
 		};
 	});
+};
+
+/**
+ *
+ * @param categories list of categories
+ * @param items list of items to be mapped with cateogries
+ * @returns mapped items if there is category otherwise items itself
+ */
+export const mergeWithCategoryMapping = (categories: CollectionItem[], items: CollectionItem[], authors: CollectionItem[]) => {
+	const modifiedItems = mapCategoryToBlog(categories, items, authors);
+	return modifiedItems ? modifiedItems : items;
 };
