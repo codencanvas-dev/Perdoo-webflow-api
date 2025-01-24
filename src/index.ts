@@ -60,9 +60,15 @@ export default {
 			...mergeWithCategoryMapping(categories!, podcasts, authors!),
 		];
 
+		const sortedBlogs = allModified.sort((a, b) => {
+			const bDate = b.createdOn ? new Date(b.createdOn).getTime() : 0;
+			const aDate = a.createdOn ? new Date(a.createdOn).getTime() : 0;
+			return bDate - aDate;
+		});
+
 		// setting data to cache
 		await setDataToCache(cacheKey, allModified, KV);
 
-		return new Response(JSON.stringify(allModified.map((al) => console.log(al.createdOn))));
+		return new Response(JSON.stringify(sortedBlogs));
 	},
 } satisfies ExportedHandler<Env>;
