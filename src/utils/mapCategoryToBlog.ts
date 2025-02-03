@@ -15,15 +15,19 @@ export const mapCategoryToBlog = (
 	blogs: CollectionItem[],
 	authors: CollectionItem[]
 ): CollectionItem[] | undefined => {
-	if (!blogs[0].fieldData.category) return undefined;
+	// if (!blogs[0].fieldData.category) return undefined;
+
+	const hasCategory = blogs[0].fieldData.category;
+
 	// Create a lookup map for categories by ID for efficient access
 	const categoryMap = new Map(categories.map((category) => [category.id, category.fieldData.name]));
 	const authorMap = new Map(authors.map((au) => [au.id, au.fieldData]));
 
 	// Return a new array of blogs with the updated field
-	return blogs.map((blog) => {
-		const category = blog.fieldData.category.map((id: string) => categoryMap.get(id));
+	const response = blogs.map((blog) => {
+		const category = hasCategory && blog.fieldData.category.map((id: string) => categoryMap.get(id));
 		const author = authorMap.get(blog.fieldData.author);
+
 		return {
 			...blog,
 			fieldData: {
@@ -33,6 +37,8 @@ export const mapCategoryToBlog = (
 			},
 		};
 	});
+
+	return response;
 };
 
 /**

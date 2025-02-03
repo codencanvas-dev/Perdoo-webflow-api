@@ -1,6 +1,6 @@
 import { CollectionItem } from 'webflow-api/api';
 import { getAllBlogs } from './utils/getAllBlogs';
-import { mapCategoryToBlog, mergeWithCategoryMapping } from './utils/mapCategoryToBlog';
+import { mergeWithCategoryMapping } from './utils/mapCategoryToBlog';
 import { Env } from './utils/types';
 import { getAllCollections, getCollectionData, getWebflowClient } from './utils/webflow';
 import { getDataFromCache, setDataToCache } from './utils/db';
@@ -60,15 +60,25 @@ export default {
 			...mergeWithCategoryMapping(categories!, podcasts, authors!),
 		];
 
-		const sortedBlogs = allModified.sort((a, b) => {
-			const bDate = b.createdOn ? new Date(b.createdOn).getTime() : 0;
-			const aDate = a.createdOn ? new Date(a.createdOn).getTime() : 0;
-			return bDate - aDate;
-		});
+		const finalData = allModified
+			.sort((a, b) => {
+				const bDate = b.createdOn ? new Date(b.createdOn).getTime() : 0;
+				const aDate = a.createdOn ? new Date(a.createdOn).getTime() : 0;
+				return bDate - aDate;
+			})
+			.map((blog) => ({
+				readTime: blog.fieldData['read-time'],
+				altFeaturedImage: blog.fieldData['alt-featured-image'],
+				featuredImage: blog.fieldData['featured-image'],
+				name: blog.fieldData.name,
+				author: blog.fieldData.author,
+				category: blog.fieldData.category,
+				slug: blog.fieldData.slug,
+			}));
 
 		// setting data to cache
-		await setDataToCache(cacheKey, allModified, KV);
+		await setDataToCache(cacheKey, finalData, KV);
 
-		return new Response(JSON.stringify(sortedBlogs));
+		return new Response(JSON.stringify(finalData), { headers: headerOptions });
 	},
 } satisfies ExportedHandler<Env>;
