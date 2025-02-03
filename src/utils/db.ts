@@ -17,5 +17,5 @@ export const getDataFromCache = async (key: string, KV: KVNamespace): Promise<an
  * @param {KVNamespace} KV
  */
 export const setDataToCache = async (key: string, data: any, KV: KVNamespace): Promise<any> => {
-	await KV.put(key, JSON.stringify(data), { expirationTtl: 120 });
+	await KV.put(key, JSON.stringify(data), { expirationTtl: 600 });
 };

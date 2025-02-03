@@ -1,6 +1,6 @@
 import { CollectionItem } from 'webflow-api/api';
 import { getAllBlogs } from './utils/getAllBlogs';
-import { mapCategoryToBlog, mergeWithCategoryMapping } from './utils/mapCategoryToBlog';
+import { mergeWithCategoryMapping } from './utils/mapCategoryToBlog';
 import { Env } from './utils/types';
 import { getAllCollections, getCollectionData, getWebflowClient } from './utils/webflow';
 import { getDataFromCache, setDataToCache } from './utils/db';
