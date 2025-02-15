@@ -13,7 +13,8 @@ import { CollectionItem } from 'webflow-api/api';
 export const mapCategoryToBlog = (
 	categories: CollectionItem[],
 	blogs: CollectionItem[],
-	authors: CollectionItem[]
+	authors: CollectionItem[],
+	collectionSlug: string
 ): CollectionItem[] | undefined => {
 	// if (!blogs[0].fieldData.category) return undefined;
 
@@ -34,6 +35,7 @@ export const mapCategoryToBlog = (
 				...blog.fieldData,
 				author,
 				category,
+				slug: `/resources/${collectionSlug}/${blog.fieldData.slug}`,
 			},
 		};
 	});
@@ -47,7 +49,12 @@ export const mapCategoryToBlog = (
  * @param items list of items to be mapped with cateogries
  * @returns mapped items if there is category otherwise items itself
  */
-export const mergeWithCategoryMapping = (categories: CollectionItem[], items: CollectionItem[], authors: CollectionItem[]) => {
-	const modifiedItems = mapCategoryToBlog(categories, items, authors);
+export const mergeWithCategoryMapping = (
+	categories: CollectionItem[],
+	items: CollectionItem[],
+	authors: CollectionItem[],
+	collectionSlug: string
+) => {
+	const modifiedItems = mapCategoryToBlog(categories, items, authors, collectionSlug);
 	return modifiedItems ? modifiedItems : items;
 };
