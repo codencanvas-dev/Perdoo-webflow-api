@@ -74,6 +74,7 @@ export default {
 				author: blog.fieldData.author,
 				category: blog.fieldData.category,
 				slug: blog.fieldData.slug,
+				hideOnListing: blog.fieldData['hide-it-on-listings'],
 			}));
 
 		// setting data to cache
