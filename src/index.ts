@@ -30,13 +30,12 @@ export default {
 		const collectionIds = {
 			Blogs: collections?.find((cl) => cl.displayName === 'Blogs')?.id,
 			OnlineGuides: collections?.find((cl) => cl.displayName === 'Online guides')?.id,
-			Ebooks: collections?.find((cl) => cl.displayName === 'Ebooks and Downloads')?.id,
+			Ebooks: collections?.find((cl) => cl.displayName === 'Ebooks & Downloads')?.id,
 			Videos: collections?.find((cl) => cl.displayName === 'Videos')?.id,
 			Podcasts: collections?.find((cl) => cl.displayName === 'Podcasts')?.id,
 			Categories: collections?.find((cl) => cl.displayName === 'Categories')?.id,
 			Authors: collections?.find((cl) => cl.displayName === 'Authors')?.id,
 		};
-
 		// Fetch data for blogs, guides, etc.
 		const [blogs, onlineGuides, ebooks, videos, podcasts] = await Promise.all([
 			getAllBlogs(client, collectionIds.Blogs!),
