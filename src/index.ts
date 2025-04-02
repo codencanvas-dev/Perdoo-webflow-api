@@ -76,6 +76,7 @@ export default {
 				hideOnListing: blog.fieldData['hide-it-on-listings'],
 			}));
 
+		finalData.map((b) => console.log(b.category));
 		// setting data to cache
 		await setDataToCache(cacheKey, finalData, KV);
 
