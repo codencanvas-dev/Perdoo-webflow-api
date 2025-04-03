@@ -73,7 +73,8 @@ export default {
 				author: blog.fieldData.author,
 				category: blog.fieldData.category,
 				slug: blog.fieldData.slug,
-				hideOnListing: blog.fieldData['hide-it-on-listings'],
+				hideOnListing: blog.fieldData['hide-it-on-listings'] || undefined,
+				videoSlug: blog.fieldData['video-src'] || undefined,
 			}));
 
 		// setting data to cache
