@@ -61,8 +61,8 @@ export default {
 
 		const finalData = allModified
 			.sort((a, b) => {
-				const bDate = b.createdOn ? new Date(b.createdOn).getTime() : 0;
-				const aDate = a.createdOn ? new Date(a.createdOn).getTime() : 0;
+				const bDate = b.fieldData['publishing-date'] ? new Date(b.fieldData['publishing-date']).getTime() : 0;
+				const aDate = a.fieldData['publishing-date'] ? new Date(a.fieldData['publishing-date']).getTime() : 0;
 				return bDate - aDate;
 			})
 			.map((blog) => ({
@@ -76,7 +76,6 @@ export default {
 				hideOnListing: blog.fieldData['hide-it-on-listings'],
 			}));
 
-		finalData.map((b) => console.log(b.category));
 		// setting data to cache
 		await setDataToCache(cacheKey, finalData, KV);
 
