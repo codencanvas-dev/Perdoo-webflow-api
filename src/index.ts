@@ -77,8 +77,6 @@ export default {
 				videoSlug: blog.fieldData['video-src'] || undefined,
 			}));
 
-		finalData.map((b) => console.log(b.videoSlug));
-
 		// setting data to cache
 		await setDataToCache(cacheKey, finalData, KV);
 
