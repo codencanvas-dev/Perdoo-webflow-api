@@ -73,8 +73,11 @@ export default {
 				author: blog.fieldData.author,
 				category: blog.fieldData.category,
 				slug: blog.fieldData.slug,
-				hideOnListing: blog.fieldData['hide-it-on-listings'],
+				hideOnListing: blog.fieldData['hide-it-on-listings'] || undefined,
+				videoSlug: blog.fieldData['video-src'] || undefined,
 			}));
+
+		finalData.map((b) => console.log(b.videoSlug));
 
 		// setting data to cache
 		await setDataToCache(cacheKey, finalData, KV);
