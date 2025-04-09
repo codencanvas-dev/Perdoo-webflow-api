@@ -53,11 +53,11 @@ export default {
 		//mapping blogs single main category with category name
 		allModified = [
 			...allModified,
-			...mergeWithCategoryMapping(categories!, blogs, authors!, 'blog'),
-			...mergeWithCategoryMapping(categories!, onlineGuides, authors!, 'online-guides'),
-			...mergeWithCategoryMapping(categories!, ebooks, authors!, 'ebooks-downloads'),
-			...mergeWithCategoryMapping(categories!, videos, authors!, 'videos'),
-			...mergeWithCategoryMapping(categories!, podcasts, authors!, 'podcasts'),
+			...mergeWithCategoryMapping(categories!, blogs, authors!, 'blog', 'category'),
+			...mergeWithCategoryMapping(categories!, onlineGuides, authors!, 'online-guides', 'categories-2'),
+			...mergeWithCategoryMapping(categories!, ebooks, authors!, 'ebooks-downloads', 'category'), // adjust if needed
+			...mergeWithCategoryMapping(categories!, videos, authors!, 'videos', 'category'), // adjust if needed
+			...mergeWithCategoryMapping(categories!, podcasts, authors!, 'podcasts', 'category'), // adjust if needed
 		];
 
 		const finalData = allModified

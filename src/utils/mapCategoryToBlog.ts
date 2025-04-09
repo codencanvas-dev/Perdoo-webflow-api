@@ -14,28 +14,23 @@ export const mapCategoryToBlog = (
 	categories: CollectionItem[],
 	blogs: CollectionItem[],
 	authors: CollectionItem[],
-	collectionSlug: string
+	collectionSlug: string,
+	categoryFieldKey: string = 'category' // default to 'category' for blogs
 ): CollectionItem[] | undefined => {
-	if (!blogs.length) return undefined;
+	// Return early if the category field is missing
+	if (!blogs[0].fieldData[categoryFieldKey]) return undefined;
+
 
 	const categoryMap = new Map(categories.map((category) => [category.id, category.fieldData.name]));
 	const authorMap = new Map(authors.map((author) => [author.id, author.fieldData]));
 
 	const response = blogs.map((blog) => {
-		// Match any field that looks like categories / categories-2 / category etc.
-		const categoryFields = Object.keys(blog.fieldData).filter((key) =>
-			key.match(/^categories?(-\d+)?$/)
-		);
+    
+		const categoryIds = blog.fieldData[categoryFieldKey];
+		const category = Array.isArray(categoryIds)
+		? categoryIds.map((id: string) => categoryMap.get(id))
+		: []; // fallback to empty array if not an array		const author = authorMap.get(blog.fieldData.author);
 
-		// Collect all category IDs
-		const categoryIds: string[] = categoryFields.flatMap((field) => {
-			const value = blog.fieldData[field];
-			if (Array.isArray(value)) return value;
-			if (typeof value === 'string') return [value];
-			return [];
-		});
-
-		const categoryNames = categoryIds.map((id) => categoryMap.get(id)).filter(Boolean);
 		const author = authorMap.get(blog.fieldData.author);
 
 		return {
@@ -65,9 +60,10 @@ export const mapCategoryToBlog = (
 export const mergeWithCategoryMapping = (
 	categories: CollectionItem[],
 	items: CollectionItem[],
-	authors: CollectionItem[],
-	collectionSlug: string
-): CollectionItem[] => {
-	const modifiedItems = mapCategoryToBlog(categories, items, authors, collectionSlug);
-	return modifiedItems ?? items;
+	collectionSlug: string,
+	categoryFieldKey: string = 'category'
+) => {
+	const modifiedItems = mapCategoryToBlog(categories, items, authors, collectionSlug, categoryFieldKey);
+	return modifiedItems ? modifiedItems : items;
+
 };
