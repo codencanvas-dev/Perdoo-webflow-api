@@ -36,6 +36,7 @@ export default {
 			Categories: collections?.find((cl) => cl.displayName === 'Categories')?.id,
 			Authors: collections?.find((cl) => cl.displayName === 'Authors')?.id,
 		};
+
 		// Fetch data for blogs, guides, etc.
 		const [blogs, onlineGuides, ebooks, videos, podcasts] = await Promise.all([
 			getAllBlogs(client, collectionIds.Blogs!),
