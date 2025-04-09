@@ -2,13 +2,13 @@ import { CollectionItem } from 'webflow-api/api';
 
 /**
  * Maps categories to their corresponding blogs by matching their IDs
- * and returns a new array of blogs with the updated `single-main-category` field.
+ * and returns a new array of blogs with the updated `category` field.
  *
  * @param {CollectionItem[]} categories - The array of category objects.
  * Each category object contains an `id` and `fieldData` with a `name` property.
  * @param {CollectionItem[]} blogs - The array of blog objects.
- * Each blog object contains an `id` and `fieldData` where the `single-main-category` will be added.
- * @returns {CollectionItem[]} A new array of blogs with the updated `single-main-category` field.
+ * Each blog object contains an `id` and `fieldData` where category fields may exist.
+ * @returns {CollectionItem[]} A new array of blogs with the updated `category` field.
  */
 export const mapCategoryToBlog = (
 	categories: CollectionItem[],
@@ -16,17 +16,26 @@ export const mapCategoryToBlog = (
 	authors: CollectionItem[],
 	collectionSlug: string
 ): CollectionItem[] | undefined => {
-	// if (!blogs[0].fieldData.category) return undefined;
+	if (!blogs.length) return undefined;
 
-	const hasCategory = blogs[0].fieldData.category;
-
-	// Create a lookup map for categories by ID for efficient access
 	const categoryMap = new Map(categories.map((category) => [category.id, category.fieldData.name]));
-	const authorMap = new Map(authors.map((au) => [au.id, au.fieldData]));
+	const authorMap = new Map(authors.map((author) => [author.id, author.fieldData]));
 
-	// Return a new array of blogs with the updated field
 	const response = blogs.map((blog) => {
-		const category = hasCategory && blog.fieldData.category.map((id: string) => categoryMap.get(id));
+		// Match any field that looks like categories / categories-2 / category etc.
+		const categoryFields = Object.keys(blog.fieldData).filter((key) =>
+			key.match(/^categories?(-\d+)?$/)
+		);
+
+		// Collect all category IDs
+		const categoryIds: string[] = categoryFields.flatMap((field) => {
+			const value = blog.fieldData[field];
+			if (Array.isArray(value)) return value;
+			if (typeof value === 'string') return [value];
+			return [];
+		});
+
+		const categoryNames = categoryIds.map((id) => categoryMap.get(id)).filter(Boolean);
 		const author = authorMap.get(blog.fieldData.author);
 
 		return {
@@ -34,7 +43,7 @@ export const mapCategoryToBlog = (
 			fieldData: {
 				...blog.fieldData,
 				author,
-				category,
+				category: categoryNames,
 				slug: `/resources/${collectionSlug}/${blog.fieldData.slug}`,
 			},
 		};
@@ -43,18 +52,22 @@ export const mapCategoryToBlog = (
 	return response;
 };
 
+
 /**
+ * Merges blog items with category and author mapping if categories exist.
  *
- * @param categories list of categories
- * @param items list of items to be mapped with cateogries
- * @returns mapped items if there is category otherwise items itself
+ * @param categories List of categories
+ * @param items List of items to be mapped with categories
+ * @param authors List of authors
+ * @param collectionSlug Slug used to build resource URL
+ * @returns Mapped items with enriched fields
  */
 export const mergeWithCategoryMapping = (
 	categories: CollectionItem[],
 	items: CollectionItem[],
 	authors: CollectionItem[],
 	collectionSlug: string
-) => {
+): CollectionItem[] => {
 	const modifiedItems = mapCategoryToBlog(categories, items, authors, collectionSlug);
-	return modifiedItems ? modifiedItems : items;
+	return modifiedItems ?? items;
 };
