@@ -14,19 +14,21 @@ export const mapCategoryToBlog = (
 	categories: CollectionItem[],
 	blogs: CollectionItem[],
 	authors: CollectionItem[],
-	collectionSlug: string
+	collectionSlug: string,
+	categoryFieldKey: string = 'category' // default to 'category' for blogs
 ): CollectionItem[] | undefined => {
-	// if (!blogs[0].fieldData.category) return undefined;
+	// Return early if the category field is missing
+	if (!blogs[0].fieldData[categoryFieldKey]) return undefined;
 
-	const hasCategory = blogs[0].fieldData.category;
-
-	// Create a lookup map for categories by ID for efficient access
 	const categoryMap = new Map(categories.map((category) => [category.id, category.fieldData.name]));
 	const authorMap = new Map(authors.map((au) => [au.id, au.fieldData]));
 
-	// Return a new array of blogs with the updated field
 	const response = blogs.map((blog) => {
-		const category = hasCategory && blog.fieldData.category.map((id: string) => categoryMap.get(id));
+		const categoryIds = blog.fieldData[categoryFieldKey];
+		const category = Array.isArray(categoryIds)
+		? categoryIds.map((id: string) => categoryMap.get(id))
+		: []; // fallback to empty array if not an array		const author = authorMap.get(blog.fieldData.author);
+
 		const author = authorMap.get(blog.fieldData.author);
 
 		return {
@@ -43,6 +45,7 @@ export const mapCategoryToBlog = (
 	return response;
 };
 
+
 /**
  *
  * @param categories list of categories
@@ -53,8 +56,9 @@ export const mergeWithCategoryMapping = (
 	categories: CollectionItem[],
 	items: CollectionItem[],
 	authors: CollectionItem[],
-	collectionSlug: string
+	collectionSlug: string,
+	categoryFieldKey: string = 'category'
 ) => {
-	const modifiedItems = mapCategoryToBlog(categories, items, authors, collectionSlug);
+	const modifiedItems = mapCategoryToBlog(categories, items, authors, collectionSlug, categoryFieldKey);
 	return modifiedItems ? modifiedItems : items;
 };
